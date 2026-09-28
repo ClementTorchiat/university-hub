@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>University Hub</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/src/index.css" />
+    <link rel="stylesheet" href="/src/schedule.css" />
+  </head>
+  <body>
+    <!-- Draggable Mac Titlebar Area -->
+    <div class="titlebar"></div>
+
+    <!-- Main Hub Container (Dashboard) -->
+    <div class="app-container" id="main-app">
+      <header class="dashboard-header">
+        <div class="dashboard-header-left">
+          <i class="ph-fill ph-graduation-cap"></i>
+          <h1>University Hub</h1>
+        </div>
+        <div style="display:flex; align-items:center; gap: 1rem; margin-right: 1rem;">
+          <div id="header-streak-widget" style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.3rem;" title="Votre Streak !">
+            <i class="ph-fill ph-fire" style="font-size: 1.1rem; color: #f97316;"></i> <span id="streak-count">0</span>
+          </div>
+          <div id="header-vacation-widget" style="font-size: 0.85rem; font-weight: 600; color: var(--accent-color); background: #eef7f0; padding: 0.3rem 0.6rem; border-radius: 20px; display: none;">
+          </div>
+          <div id="header-weather-widget" style="display:flex; align-items:center; gap:0.5rem; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary);">
+            <span>Chargement Météo...</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="dashboard-grid">
+        <!-- Schedule View -->
+        <section class="module-card module-schedule">
+          <header class="module-header">
+            <h2><i class="ph ph-calendar-blank"></i> Emploi du Temps</h2>
+            <button class="btn-icon" id="btn-sync-ade" title="Synchroniser l'EDT"><i class="ph ph-arrows-clockwise"></i></button>
+          </header>
+
+          <div class="module-content" id="schedule-list">
+            <!-- Rendered via JS -->
+          </div>
+        </section>
+
+        <!-- Agenda View -->
+        <section class="module-card module-agenda">
+          <header class="module-header">
+            <h2><i class="ph ph-list-checks"></i> Agenda</h2>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn-icon" id="btn-toggle-completed" title="Afficher les tâches terminées"><i class="ph ph-eye-slash"></i></button>
+              <button class="btn-icon" id="btn-add-task"><i class="ph ph-plus"></i></button>
+            </div>
+          </header>
+          <div class="module-content" id="agenda-list">
+             <!-- Rendered via JS -->
+          </div>
+        </section>
+
+        <!-- Notes View -->
+        <section class="module-card module-notes">
+          <header class="module-header">
+            <h2><i class="ph ph-notebook"></i> Notes rapides</h2>
+          </header>
+          <div class="module-content">
+            <textarea id="notes-textarea" placeholder="Commencez à taper vos notes ici..."></textarea>
+          </div>
+        </section>
+
+        <!-- Pomodoro View -->
+        <section class="module-card module-pomodoro">
+          <header class="module-header">
+            <h2><i class="ph ph-timer"></i> Pomodoro</h2>
+          </header>
+          <div class="pomodoro-content">
+            <div class="timer-display" id="pomodoro-time">25:00</div>
+            <div class="timer-controls" style="margin-bottom: 2rem;">
+              <button class="pomo-btn" id="btn-pomo-start"><i class="ph-fill ph-play"></i></button>
+              <button class="pomo-btn" id="btn-pomo-pause"><i class="ph-fill ph-pause"></i></button>
+              <button class="pomo-btn" id="btn-pomo-reset"><i class="ph-fill ph-arrow-counter-clockwise"></i></button>
+            </div>
+          </div>
+          <!-- Liens rapides inside Pomodoro card bottom -->
+          <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="font-size: 0.9rem; color: var(--text-secondary);"><i class="ph ph-link"></i> Liens rapides</h3>
+              <button class="action-btn" id="btn-add-link" style="font-size: 0.9rem;"><i class="ph ph-plus"></i></button>
+            </div>
+            <div class="links-list" id="links-grid">
+               <!-- Rendered via JS -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modals -->
+    <dialog id="modal-ade" class="glass-modal">
+      <form method="dialog" id="form-ade">
+        <h2>Configurer ADE</h2>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Entrez votre lien d'abonnement iCal / .ics de votre emploi du temps ADE.
+        </p>
+        <div class="input-group">
+          <label>URL iCal ADE</label>
+          <input type="url" id="ade-url" required placeholder="https://..." />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-primary" id="btn-close-ade">Annuler</button>
+          <button type="submit" class="btn-save">Synchroniser</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="modal-task" class="glass-modal">
+      <form method="dialog" id="form-task">
+        <h2>Nouvelle tâche</h2>
+        <div class="input-group">
+          <label>Titre</label>
+          <input type="text" id="task-title" required />
+        </div>
+        <div class="input-group">
+          <label>Type</label>
+          <select id="task-type" required>
+            <option value="Devoir">Devoir</option>
+            <option value="Examen">Examen</option>
+            <option value="Oral">Oral</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Matière liée (Optionnel)</label>
+          <select id="task-subject">
+            <option value="">Aucune</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <div class="input-group" style="flex: 1;">
+            <label>Date limite</label>
+            <input type="date" id="task-date" required />
+          </div>
+          <div class="input-group" style="flex: 1;">
+            <label>Heure (Optionnel)</label>
+            <input type="time" id="task-time" />
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Lien (Optionnel)</label>
+          <input type="url" id="task-link" placeholder="https://..." />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-primary" id="btn-close-task">Annuler</button>
+          <button type="submit" class="btn-save">Enregistrer</button>
+        </div>
+      </form>
+    </dialog>
+
+
+    <dialog id="modal-link" class="glass-modal">
+      <form method="dialog" id="form-link">
+        <h2>Ajouter un lien</h2>
+        <div class="input-group">
+          <label>Nom</label>
+          <input type="text" id="link-name" required />
+        </div>
+        <div class="input-group">
+          <label>URL</label>
+          <input type="url" id="link-url" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-primary" id="btn-close-link">Annuler</button>
+          <button type="submit" class="btn-save">Enregistrer</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Tray App Container -->
+    <div id="tray-app" style="display: none;" class="tray-container">
+      <div class="tray-header">
+        <i class="ph-fill ph-graduation-cap" style="color:var(--text-primary); font-size:1.5rem;"></i>
+        <span style="font-family:var(--font-display); font-weight:600; color:var(--text-primary)">UniHub</span>
+      </div>
+      <div class="tray-section" style="margin-bottom: 0;">
+        <p style="font-size: 0.75rem; color:var(--text-secondary); margin-bottom: 0.5rem; font-weight:500;">Prochain cours</p>
+        <div id="tray-next-class">
+          <!-- Populated by JS with class-card -->
+          <div style="font-weight: 500; font-size: 0.9rem; color:var(--text-primary)">Calcul des cours...</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/renderer.js"></script>
+  </body>
+</html>

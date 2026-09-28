@@ -1,0 +1,42 @@
+
+/* Tray App Specific Styles - Light Mode */
+.tray-container {
+  height: 100vh;
+  width: 100vw;
+  background: #ffffff; /* Solid white background for tray */
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 8px; /* For rounded corners in tray window */
+  border: 1px solid var(--border-color); /* Light border */
+}
+
+.tray-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.tray-section {
+  margin-bottom: 1rem;
+}
+
+.tray-input {
+  width: 100%;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.tray-input:focus {
+  border-color: var(--accent-color);
+}
